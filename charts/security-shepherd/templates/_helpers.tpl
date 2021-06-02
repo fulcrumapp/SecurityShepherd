@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "security-shepherd.name" -}}
+{{- define "fulcrum-world.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "security-shepherd.fullname" -}}
+{{- define "fulcrum-world.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "security-shepherd.chart" -}}
+{{- define "fulcrum-world.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "security-shepherd.labels" -}}
-helm.sh/chart: {{ include "security-shepherd.chart" . }}
-{{ include "security-shepherd.selectorLabels" . }}
+{{- define "fulcrum-world.labels" -}}
+helm.sh/chart: {{ include "fulcrum-world.chart" . }}
+{{ include "fulcrum-world.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,18 +45,27 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "security-shepherd.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "security-shepherd.name" . }}
+{{- define "fulcrum-world.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "fulcrum-world.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "security-shepherd.serviceAccountName" -}}
+{{- define "fulcrum-world.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "security-shepherd.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "fulcrum-world.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create imagePullSecrets
+*/}}
+{{- define "imagePullSecret" -}}
+{{- with .Values.imageCredentials }}
+{{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" .repository .username .password (printf "%s:%s" .username .password | b64enc) | b64enc }}
 {{- end }}
 {{- end }}
