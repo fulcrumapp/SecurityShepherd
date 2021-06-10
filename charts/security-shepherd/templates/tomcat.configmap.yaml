@@ -6,7 +6,7 @@ metadata:
     {{- include "security-shepherd-tomcat.labels" . | nindent 4 }}
 data:
   database.properties: |
-    databaseConnectionURL=jdbc:mysql://{{- include "security-shepherd.fullname" . }}-mysql.security-shepherd.svc.cluster.local:{{ .Values.mysql.port }}/
+    databaseConnectionURL=jdbc:mysql://{{- include "security-shepherd.fullname" . }}-mysql.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.mysql.port }}/
     DriverType=org.gjt.mm.mysql.Driver
     databaseSchema=core
     databaseUsername={{ .Values.mysql.user }}
@@ -14,7 +14,7 @@ data:
     databaseOptions=useUnicode=true&character_set_server=utf8mb4
 
   mongo.properties: |
-    connectionHost={{- include "security-shepherd.fullname" . }}-mongo.security-shepherd.svc.cluster.local
+    connectionHost={{- include "security-shepherd.fullname" . }}-mongo.{{ .Release.Namespace }}.svc.cluster.local
     connectionPort={{ .Values.mongo.port }}
     databaseName=shepherdGames
     connectTimeout={{ .Values.mongo.connectionTimeout }}
