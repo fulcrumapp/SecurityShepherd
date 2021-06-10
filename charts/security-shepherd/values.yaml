@@ -67,6 +67,24 @@ mysql:
   user: root
   password: CowSaysMoo
 
+mongo:
+  replicaCount: 1
+  port: 27017
+  image:
+    repository: artifactory.chaos.fulcrum.tools/dev-dev/owasp/security-shepherd_mongo
+    tag: latest
+    pullPolicy: Always
+  resources: {}
+  connectionTimeout: 1000
+  socketTimeout: 0
+  serverSelectionTimeout: 30000
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
 ingress:
   enabled: false
   annotations: {}

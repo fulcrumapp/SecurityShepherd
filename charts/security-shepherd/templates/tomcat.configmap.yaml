@@ -12,3 +12,11 @@ data:
     databaseUsername={{ .Values.mysql.user }}
     databasePassword={{ .Values.mysql.password }}
     databaseOptions=useUnicode=true&character_set_server=utf8mb4
+
+  mongo.properties: |
+    connectionHost={{- include "security-shepherd.fullname" . }}-mongo.security-shepherd.svc.cluster.local
+    connectionPort={{ .Values.mongo.port }}
+    databaseName=shepherdGames
+    connectTimeout={{ .Values.mongo.connectionTimeout }}
+    socketTimeout={{ .Values.mongo.socketTimeout }}
+    serverSelectionTimeout={{ .Values.mongo.serverSelectionTimeout }}

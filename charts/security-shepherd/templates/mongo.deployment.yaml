@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "security-shepherd.fullname" . }}-mongo
+  labels:
+    {{- include "security-shepherd-mongo.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.mongo.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "security-shepherd-mongo.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "security-shepherd-mongo.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "security-shepherd.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "mongo"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag }}"
+          imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}
+          ports:
+            - name: mongo
+              containerPort: {{ .Values.mongo.port }}
+              protocol: TCP
+# TODO
+#         livenessProbe:
+#           exec:
+#             command: [ "sh", "-c", "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}" ]
+#         readinessProbe:
+#           exec:
+#             command: [ "sh", "-c", "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}" ]
+          resources:
+            {{- toYaml .Values.mongo.resources | nindent 12 }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

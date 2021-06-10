@@ -7,9 +7,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.tomcat.port }}
-      targetPort: http
+    - name: tomcat
+      port: {{ .Values.tomcat.port }}
+      targetPort: tomcat
       protocol: TCP
-      name: http
   selector:
     {{- include "security-shepherd-tomcat.selectorLabels" . | nindent 4 }}

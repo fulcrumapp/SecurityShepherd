@@ -28,7 +28,7 @@ spec:
           image: "{{ .Values.tomcat.image.repository }}:{{ .Values.tomcat.image.tag }}"
           imagePullPolicy: {{ .Values.tomcat.image.pullPolicy }}
           ports:
-            - name: http
+            - name: tomcat
               containerPort: 8080
               protocol: TCP
 # TODO Figure this out later
@@ -41,18 +41,27 @@ spec:
 #             path: /
 #             port: http
           volumeMounts:
-            - name: config
+            - name: mysql-config
               mountPath: /usr/local/tomcat/conf/database.properties
               subPath: database.properties
+            - name: mongo-config
+              mountPath: /usr/local/tomcat/conf/mongo.properties
+              subPath: mongo.properties
           resources:
             {{- toYaml .Values.tomcat.resources | nindent 12 }}
       volumes:
-        - name: config
+        - name: mysql-config
           configMap:
             name: {{ include "security-shepherd.fullname" . }}-tomcat
             items:
               - key: database.properties
                 path: database.properties
+        - name: mongo-config
+          configMap:
+            name: {{ include "security-shepherd.fullname" . }}-tomcat
+            items:
+              - key: mongo.properties
+                path: mongo.properties
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

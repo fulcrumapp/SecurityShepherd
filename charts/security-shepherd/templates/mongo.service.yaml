@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "security-shepherd.fullname" . }}-mongo
+  labels:
+    {{- include "security-shepherd-mongo.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: mongo
+      port: {{ .Values.mongo.port }}
+      targetPort: mongo
+      protocol: TCP
+  selector:
+    {{- include "security-shepherd-mongo.selectorLabels" . | nindent 4 }}

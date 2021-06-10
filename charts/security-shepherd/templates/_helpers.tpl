@@ -64,6 +64,17 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
+{{- define "security-shepherd-mongo.labels" -}}
+helm.sh/chart: {{ include "security-shepherd.chart" . }}
+app: {{ include "security-shepherd.name" . }}-mongo
+{{ include "security-shepherd-mongo.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
 {{/*
 Selector labels
 */}}
@@ -79,6 +90,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "security-shepherd-mysql.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "security-shepherd.name" . }}-mysql
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{- define "security-shepherd-mongo.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "security-shepherd.name" . }}-mongo
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
