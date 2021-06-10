@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "security-shepherd.fullname" . }}
+  labels:
+    {{- include "security-shepherd.labels" . | nindent 4 }}
+spec:
+  hosts:
+    {{- toYaml .Values.hosts | nindent 4 }}
+  gateways:
+    - "fulcrum-ops/fulcrum-gateway"
+    - "mesh"
+  http:
+    - name: "tomcat"
+      route:
+        - destination:
+            host: {{ include "security-shepherd.fullname" . }}-tomcat
+            port:
+              number: {{ .Values.tomcat.port }}

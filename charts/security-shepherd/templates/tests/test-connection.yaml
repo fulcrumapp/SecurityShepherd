@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "security-shepherd.fullname" . }}:{{ .Values.web.port }}']
+      args: ['{{ include "security-shepherd.fullname" . }}:{{ .Values.tomcat.port }}']
   restartPolicy: Never

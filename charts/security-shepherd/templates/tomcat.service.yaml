@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "security-shepherd.fullname" . }}-tomcat
+  labels:
+    {{- include "security-shepherd-tomcat.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.tomcat.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "security-shepherd-tomcat.selectorLabels" . | nindent 4 }}

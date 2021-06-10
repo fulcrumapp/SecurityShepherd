@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "security-shepherd.fullname" . }}-tomcat
+  labels:
+    {{- include "security-shepherd.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.tomcat.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "security-shepherd-tomcat.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "security-shepherd-tomcat.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "security-shepherd.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "tomcat"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.tomcat.image.repository }}:{{ .Values.tomcat.image.tag }}"
+          imagePullPolicy: {{ .Values.tomcat.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+# TODO Figure this out later
+#         livenessProbe:
+#           httpGet:
+#             path: /
+#             port: http
+#         readinessProbe:
+#           httpGet:
+#             path: /
+#             port: http
+          volumeMounts:
+            - name: config
+              mountPath: /usr/local/tomcat/conf/database.properties
+              subPath: database.properties
+          resources:
+            {{- toYaml .Values.tomcat.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "security-shepherd.fullname" . }}-tomcat
+            items:
+              - key: database.properties
+                path: database.properties
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

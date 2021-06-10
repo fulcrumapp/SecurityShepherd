@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "security-shepherd.fullname" . }}-tomcat
+  labels:
+    {{- include "security-shepherd-tomcat.labels" . | nindent 4 }}
+data:
+  database.properties: |
+    databaseConnectionURL=jdbc:mysql://{{- include "security-shepherd.fullname" . }}-mysql.security-shepherd.svc.cluster.local:{{ .Values.mysql.port }}/
+    DriverType=org.gjt.mm.mysql.Driver
+    databaseSchema=core
+    databaseUsername={{ .Values.mysql.user }}
+    databasePassword={{ .Values.mysql.password }}
+    databaseOptions=useUnicode=true&character_set_server=utf8mb4

@@ -2,13 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+hosts:
+  - security-shepherd.thefulcrum.team
 
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+replicaCount: 1
 
 imagePullSecrets:
   - name: artifactory-docker
@@ -37,14 +34,13 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-web:
+tomcat:
   replicaCount: 1
   port: 80
   image:
-#   repository: owasp/security-shepherd
-    repository: artifactory.chaos.fulcrum.tools/artifactory/dev-dev/owasp/security-shepherd
+    repository: artifactory.chaos.fulcrum.tools/dev-dev/owasp/security-shepherd
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   resources: {}
     # limits:
     #   cpu: 100m
@@ -54,13 +50,13 @@ web:
     #   memory: 128Mi
   conf: {}
 
-db:
+mysql:
   replicaCount: 1
+  port: 3306
   image:
-#   repository: owasp/security-shepherd_mysql
-    repository: artifactory.chaos.fulcrum.tools/artifactory/dev-dev/owasp/security-shepherd_mysql
+    repository: artifactory.chaos.fulcrum.tools/dev-dev/owasp/security-shepherd_mysql
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   resources: {}
     # limits:
     #   cpu: 100m
