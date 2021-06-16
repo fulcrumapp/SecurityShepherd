@@ -37,6 +37,7 @@ spec:
           volumeMounts:
             - name: mysql
               mountPath: /var/lib/mysql
+              subPath: mysql
           livenessProbe:
             exec:
               command: [ "sh", "-c", "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}" ]
@@ -47,7 +48,8 @@ spec:
             {{- toYaml .Values.mysql.resources | nindent 12 }}
       volumes:
         - name: mysql
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ .Values.mysql.pvc }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

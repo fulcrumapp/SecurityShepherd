@@ -52,6 +52,7 @@ tomcat:
 
 mysql:
   replicaCount: 1
+  pvc: security-shepherd-pvc-mysql
   port: 3306
   image:
     repository: artifactory.chaos.fulcrum.tools/dev-dev/owasp/security-shepherd_mysql
